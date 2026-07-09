@@ -1,71 +1,62 @@
-# Are you looking for the source code for my book?
+# PSI password checkup
+## 1.Google
+Protecting accounts from credential stuffing with password breach alerting （USENIX Security 2019）[https://www.usenix.org/conference/usenixsecurity19/presentation/thomas](https://)
 
-Please find it here: https://github.com/dvf/blockchain-book
+## 2.Apple
+white book (Password Monitoring -> Services security -> Password security overview) https://help.apple.com/pdf/security/en_US/apple-platform-security-guide.pdf
 
-The book is available on Amazon: https://www.amazon.com/Learn-Blockchain-Building-Understanding-Cryptocurrencies/dp/1484251709
+1. Two-part matching process
 
-# Learn Blockchains by Building One
+**Local List.** Apple stores a global list of the most frequently leaked passwords directly on users' iPhones and Macs. If a user's password matches an entry in this local list, the device immediately issues a warning without any network communication, ensuring zero privacy leakage.
 
-[![Build Status](https://travis-ci.org/dvf/blockchain.svg?branch=master)](https://travis-ci.org/dvf/blockchain)
-
-This is the source code for my post on [Building a Blockchain](https://medium.com/p/117428612f46). 
-
-## Installation
-
-1. Make sure [Python 3.6+](https://www.python.org/downloads/) is installed. 
-2. Install [pipenv](https://github.com/kennethreitz/pipenv). 
-
-```
-$ pip install pipenv 
-```
-3. Install requirements  
-```
-$ pipenv install 
-``` 
-
-4. Run the server:
-    * `$ pipenv run python blockchain.py` 
-    * `$ pipenv run python blockchain.py -p 5001`
-    * `$ pipenv run python blockchain.py --port 5002`
-    
-## Docker
-
-Another option for running this blockchain program is to use Docker.  Follow the instructions below to create a local Docker container:
-
-1. Clone this repository
-2. Build the docker container
-
-```
-$ docker build -t blockchain .
-```
-
-3. Run the container
-
-```
-$ docker run --rm -p 80:5000 blockchain
-```
-
-4. To add more instances, vary the public port number before the colon:
-
-```
-$ docker run --rm -p 81:5000 blockchain
-$ docker run --rm -p 82:5000 blockchain
-$ docker run --rm -p 83:5000 blockchain
-```
-
-## Installation (C# Implementation)
-
-1. Install a free copy of Visual Studio IDE (Community Edition):
-https://www.visualstudio.com/vs/
-
-2. Once installed, open the solution file (BlockChain.sln) using the File > Open > Project/Solution menu options within Visual Studio.
-
-3. From within the "Solution Explorer", right click the BlockChain.Console project and select the "Set As Startup Project" option.
-
-4. Click the "Start" button, or hit F5 to run. The program executes in a console window, and is controlled via HTTP with the same commands as the Python version.
+**Cloud-Based Low-Frequency Database Query.** Only when a password is absent from the local high-frequency list does the system invoke a cryptographic protocol to compare it against a cloud database of less common leaked passwords.
 
 
-## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+2. Batching and Padding：
 
+Querying passwords one by one would allow Apple to infer how many passwords a user has stored based on the number of requests. To prevent this side-channel leakage, iOS performs periodic round-robin queries independent of user activity. Moreover, each query always contains a fixed number of password candidates. If the user has fewer real passwords, the system automatically inserts randomly generated dummy passwords to pad the batch, making it impossible for the server to distinguish genuine queries from fake ones.
+
+3. Cryptographic Process / OPRF
+
+Passwords sent for cloud verification are processed using a privacy-preserving cryptographic protocol based on an OPRF-enabled PSI scheme. This allows leaked-password detection without revealing the user's actual passwords to Apple. 
+
+However, while OPRF protects query privacy, it cannot generate publicly verifiable, unforgeable compliance proofs for third-party identity providers; the protocol is designed solely for private verification.
+
+## 3. Efficient Unbalanced Quorum PSI from Homomorphic Encryption   CCS 24
+
+https://dl.acm.org/doi/pdf/10.1145/3634737.3657001
+
+## 4. Is PSI Really Faster Than PSU? Achieving Efficient PSU with Invertible Bloom Filters   EUROCRYPT 2026 
+
+https://link.springer.com/chapter/10.1007/978-3-032-25317-0_15
+
+## 5. Protecting accounts from credential stuffing with password breach alerting    USENIX 21
+
+https://www.usenix.org/system/files/sec21-kogan.pdf
+
+## 6. Scaling Private Set Intersection to Billion-Element Sets    FC 2014
+
+https://link.springer.com/chapter/10.1007/978-3-662-45472-5_13
+
+## 7. Faster Private Set Intersection based on OT extension, USENIX Security 2014
+
+https://eprint.iacr.org/2014/447
+
+## 8. Protocols for Checking Compromised Credentials, ACM CCS 2019
+
+https://dl.acm.org/doi/10.1145/3319535.3354229
+
+## 9. Detecting Stuffing of a User's Credentials at Her Own Accounts, USENIX Security 2020
+
+https://www.usenix.org/conference/usenixsecurity20/presentation/wang
+
+## 10. Private Blocklist Lookups with Checklist, USENIX Security 2021
+
+https://www.usenix.org/conference/usenixsecurity21/presentation/kogan
+
+## 11. Actively Secure Private Set Intersection in the Client-Server Setting, ACM CCS 2024
+
+https://par.nsf.gov/servlets/purl/10567168
+
+https://csrc.nist.gov/csrc/media/presentations/2024/wpec2024-1a3/images-media/wpec2024-1a3-slides-yunqing--PSI-active.pdf  slides
